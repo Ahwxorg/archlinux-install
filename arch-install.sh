@@ -58,14 +58,19 @@ pacman -S --noconfirm xorg-server xorg-xinit xorg-xkill xorg-xsetroot xorg-xback
 
 systemctl enable connman.service 
 
-eecho "Enter username:"
+echo "Enter username:"
 read username
-cho "permit persist :wheel" >> /etc/doas.conf
+echo "permit persist :wheel" >> /etc/doas.conf
 echo "permit nopass root" >> /etc/doas.conf
 echo "permit persist $username" >> /etc/doas.conf
 useradd -m -G wheel -s /bin/zsh $username
 passwd $username
 echo "Pre-installation finished. Please reboot into the drive now."
+read -p "Do you want to reboot? [y/n]" answer
+if [[ $answer = y ]] ; then
+  reboot now
+fi
+
 ai3_path=/home/$username/arch_install3.sh
 sed '1,/^#part3$/d' arch_install2.sh > $ai3_path
 chown $username:$username $ai3_path
@@ -77,9 +82,9 @@ exit
 cd $HOME
 git clone --separate-git-dir=$HOME/.dotfiles https://github.com/Ahwxorg/i3.git tmpdotfiles
 rsync --recursive --verbose --exclude '.git' tmpdotfiles/ $HOME/
-rm -r tmpdotfiles
+rm -fr tmpdotfiles
 # dwm: Window Manager
-git clone --depth=1 https://github.com/Bugswriter/dwm.git ~/.local/src/dwm
+git clone --depth=1 https://github.com/Ahwxorg/dwm.git ~/.local/src/dwm
 sudo make -C ~/.local/src/dwm install
 
 # st: Terminal
@@ -87,11 +92,11 @@ git clone --depth=1 https://github.com/Ahwxorg/pt.git ~/.local/src/st
 sudo make -C ~/.local/src/st install
 
 # dmenu: Program Menu
-git clone --depth=1 https://github.com/Bugswriter/dmenu.git ~/.local/src/dmenu
+git clone --depth=1 https://github.com/Ahwxorg/dmenu.git ~/.local/src/dmenu
 sudo make -C ~/.local/src/dmenu install
 
 # dwmblocks: Status bar for dwm
-git clone --depth=1 https://github.com/bugswriter/dwmblocks.git ~/.local/src/dwmblocks
+git clone --depth=1 https://github.com/Ahwxorg/dwmblocks.git ~/.local/src/dwmblocks
 sudo make -C ~/.local/src/dwmblocks install
 
 # yay: AUR helper
